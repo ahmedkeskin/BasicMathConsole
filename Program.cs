@@ -19,6 +19,9 @@ namespace BasicMathConsole
         private static bool _isFirst = true;
         static void Main(string[] args)
         {
+            Console.SetWindowSize(40, 10);
+            Console.SetBufferSize(40, 10);
+            
             _random = new Random();
             _answers = new List<bool>();
             _startTime = DateTime.Now;
