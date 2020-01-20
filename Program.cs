@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Threading;
 
@@ -9,7 +10,7 @@ namespace BasicMathConsole
     {
         private static Random _random;
         private static bool _programStatus = true;
-        private static List<bool> _answers;
+        private static List<Challenge> _answers;
         private static DateTime _startTime;
         private static DateTime _endTime;
         private static TimeSpan _shortestTime;
@@ -36,7 +37,11 @@ namespace BasicMathConsole
             var total = _answers.Count();
             var duration = _endTime - _startTime;
 
-           
+           foreach (var answer in _answers)
+            {
+                Console.WriteLine(answer.)
+            }
+
             Console.WriteLine($"Total Duration...: {duration.ToString()}");
             Console.WriteLine($"Total............: {total}");
             Console.WriteLine($"Correct Answer...: {correctAnswer}");
@@ -44,9 +49,9 @@ namespace BasicMathConsole
             Console.WriteLine($"Shortest.........: {_shortestQuestion} - {_shortestTime}");
             Console.WriteLine($"Longest.........: {_longestQuestion} - {_longestTime}");
             Console.ReadKey();
-            Console.WriteLine("Thanks you!");
+            Console.WriteLine("Thank you!");
            
-            Thread.Sleep(500);
+            Thread.Sleep(5000);
         }
         // TODO basamak must be written in English
         private static void GetSumLesson()
