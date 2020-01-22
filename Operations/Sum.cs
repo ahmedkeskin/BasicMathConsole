@@ -6,6 +6,10 @@ namespace BasicMathConsole.Operations
 {
     public class Sum : Operation
     {
+        public Sum()
+        {
+            Sign = "+";
+        }
         public override float Calculate(float number1, float number2)
         {
             return number1 + number2;

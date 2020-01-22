@@ -8,103 +8,133 @@ namespace BasicMathConsole
 {
     class Program
     {
-        private static Random _random;
         private static bool _programStatus = true;
-        private static List<Challenge> _answers;
-        private static DateTime _startTime;
-        private static DateTime _endTime;
-        private static TimeSpan _shortestTime;
-        private static TimeSpan _longestTime;
-        private static string _shortestQuestion;
-        private static string _longestQuestion;
-        private static bool _isFirst = true;
+        private static MathManager _mathManager;
         static void Main(string[] args)
         {
             Console.SetWindowSize(40, 10);
             Console.SetBufferSize(40, 10);
-            
-            _random = new Random();
-            _answers = new List<bool>();
-            _startTime = DateTime.Now;
-            
+            _mathManager = new MathManager();
+
             while (_programStatus)
             {
-                GetSumLesson();
-            }
-            _endTime = DateTime.Now;
-            var correctAnswer = _answers.Count(p => p == true);
-            var incorrectAnswer = _answers.Count(p => p == false);
-            var total = _answers.Count();
-            var duration = _endTime - _startTime;
-
-           foreach (var answer in _answers)
-            {
-                Console.WriteLine(answer.)
-            }
-
-            Console.WriteLine($"Total Duration...: {duration.ToString()}");
-            Console.WriteLine($"Total............: {total}");
-            Console.WriteLine($"Correct Answer...: {correctAnswer}");
-            Console.WriteLine($"Incorrect Answer.: {incorrectAnswer}");
-            Console.WriteLine($"Shortest.........: {_shortestQuestion} - {_shortestTime}");
-            Console.WriteLine($"Longest.........: {_longestQuestion} - {_longestTime}");
-            Console.ReadKey();
-            Console.WriteLine("Thank you!");
-           
-            Thread.Sleep(5000);
-        }
-        // TODO basamak must be written in English
-        private static void GetSumLesson()
-        {
-            var startTime = DateTime.Now;
-            var number1= _random.Next(0, 10);
-            var number2 = _random.Next(0, 10);
-            string question = $"{number1} + {number2}=";
-            var result = false;
-            Console.Write(question);
-            var input = Console.ReadLine();
-            if (input == "")
-            {
-                _programStatus = false;
-            }
-            else
-            {
-                Int32.TryParse(input, out int inputNumber);
-                var total = number1 + number2;
-                if (inputNumber == total)
+                var challenge = _mathManager.GetChallenge();
+                Console.Write(challenge.Question);
+                var input = Console.ReadLine();
+                if (input == string.Empty)
                 {
-                    Console.WriteLine("true!");
-                    result = true;
-                    _answers.Add(result);
-                    var duration = DateTime.Now - startTime;
-                    if (_isFirst)
-                    {
-                        _shortestTime = duration;
-                        _longestTime = duration;
-                        _shortestQuestion = question;
-                        _longestQuestion = question;
-                        _isFirst = false;
-
-                    }
-                    if (_shortestTime > duration)
-                    {
-                        _shortestTime = duration;
-                        _shortestQuestion = question;
-                    }
-                    if (_longestTime < duration)
-                    {
-                        _longestTime = duration;
-                        _longestQuestion = question;
-                    }
-                    
+                    break;
                 }
-                else
-                {
-                    Console.WriteLine($"{total}, your answer is uncorrect");
-                    _answers.Add(result);
-                }
+                int.TryParse(input, out int inputNumber);
+                challenge.InputNumber = inputNumber;
+                var result = _mathManager.SaveAnswer(challenge);
+                Console.WriteLine(result.ResultText);
             }
+            try
+            {
+                var summary = _mathManager.Finalize();
+                WriteSummary(summary);
+            }
+            catch (Exception exception)
+            {
+
+                Console.WriteLine(exception.Message);
+            }
+            Console.WriteLine("Press enter to exit");
+            Console.ReadLine();
             
+        }
+        static void WriteSummary(Summary summary)
+        {
+            Console.Clear();
+            Console.SetWindowSize(120, 30);
+            Console.SetBufferSize(120, 30);
+            string lines="<=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=->";
+            Console.WriteLine($"{lines} <o> S U M M A R Y <o> {lines}");
+            
+            Console.SetCursorPosition(0, 1);
+            Console.Write("Total");
+
+            Console.SetCursorPosition(0, 2);
+            Console.Write(summary.ChallengeCount);
+
+            Console.SetCursorPosition(16, 1);
+            Console.Write("Duration");
+
+            Console.SetCursorPosition(16, 2);
+            Console.Write(summary.ChallengeDuration.ToString(@"hh\:mm\:ss"));
+
+            Console.SetCursorPosition(25, 1);
+            Console.Write($"True");
+
+            Console.SetCursorPosition(25, 2);
+            Console.Write(summary.TrueCount);
+
+            Console.SetCursorPosition(37, 1);
+            Console.Write("False");
+
+            Console.SetCursorPosition(37, 2);
+            Console.Write(summary.FalseCount);
+
+            Console.SetCursorPosition(50, 1);
+            Console.Write("Fastest");
+
+            Console.SetCursorPosition(50, 2);
+            Console.Write(summary.FastestChallenge.Duration.ToString(@"hh\:mm\:ss"));
+
+            Console.SetCursorPosition(67, 1);
+            Console.Write("Fastest");
+
+            Console.SetCursorPosition(67, 2);
+            Console.Write(summary.FastestChallenge.Question);
+
+            Console.SetCursorPosition(85, 1);
+            Console.Write("Longest");
+
+            Console.SetCursorPosition(85, 2);
+            Console.Write(summary.LongestChallenge.Duration.ToString(@"hh\:mm\:ss"));
+
+            Console.SetCursorPosition(102, 1);
+            Console.Write("Longest");
+
+            Console.SetCursorPosition(102, 2);
+            Console.Write(summary.LongestChallenge.Question);
+
+            WriteList(summary.AllChallenges);
+            Console.ReadLine();
+        }
+        static void WriteList(List<Challenge> challenges)
+        {
+            //challenges[0].OrderNumber;
+            //challenges[0].Duration;
+            //challenges[0].Question;
+            //challenges[0].InputNumber;
+            //challenges[0].IsAnswerCorrect;
+
+            string[] titles =  {"Number","Duration","Question","Answer","Status" };
+            var titlesWidth = titles.Sum(p=>p.Length) + titles.Length;
+            var width = Console.WindowWidth / titles.Length;
+            width++;
+            
+            
+            
+            for (int row = 0; row <= challenges.Count; row++)
+            {
+                for (int i = 0; i < titles.Length; i++)
+                {
+                    Console.SetCursorPosition(i * width, row+4);
+                    Console.Write(titles[i]);
+                }
+                if (row == challenges.Count)
+                    break;
+                titles[0] = challenges[row].OrderNumber.ToString();
+                titles[1] = challenges[row].Duration.ToString();
+                titles[2] = challenges[row].Question.ToString();
+                titles[3] = challenges[row].InputNumber.ToString();
+                titles[4] = challenges[row].IsAnswerCorrect.ToString();
+
+            }
+
         }
     }
 }
