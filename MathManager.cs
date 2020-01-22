@@ -18,7 +18,7 @@ namespace BasicMathConsole
             var challenge = new Challenge();
             _random = new Random();
             _cSettings = new ChallengeSettings();
-            _cSettings.ChallengeCount = 1;
+            _cSettings.ChallengeCount = 2;
             _cSettings.MaxNumber = 9;
             _cSettings.MinNumber = 0;
             _cSettings.Operation = new Sum();
@@ -73,12 +73,13 @@ namespace BasicMathConsole
         }
         private List<Challenge> GenerateChallenge(ChallengeSettings cSettings)
         {
+            var startNo = _challenges.Count();
             for (int i = 0; i < cSettings.ChallengeCount; i++)
             {
                 var number1 = _random.Next(cSettings.MinNumber, cSettings.MaxNumber);
                 var number2 = _random.Next(cSettings.MinNumber, cSettings.MaxNumber);
                 var challenge = BuildChallenge(cSettings.Operation, number1, number2);
-                challenge.OrderNumber = i;
+                challenge.OrderNumber = startNo +i;
                 _challenges.Add(challenge);
             }
             return _challenges;
