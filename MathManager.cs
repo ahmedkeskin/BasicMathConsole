@@ -10,23 +10,29 @@ namespace BasicMathConsole
     {
         private List<Challenge> _challenges;
         private Random _random;
+        ChallengeSettings _cSettings;
         public MathManager()
         {
             _challenges = new List<Challenge>();
 
             var challenge = new Challenge();
             _random = new Random();
-            var cSettings = new ChallengeSettings();
-            cSettings.ChallengeCount = 50;
-            cSettings.MaxNumber = 9;
-            cSettings.MinNumber = 0;
-            cSettings.Operation = new Sum();
-            GenerateChallenge(cSettings);
+            _cSettings = new ChallengeSettings();
+            _cSettings.ChallengeCount = 1;
+            _cSettings.MaxNumber = 9;
+            _cSettings.MinNumber = 0;
+            _cSettings.Operation = new Sum();
+            GenerateChallenge(_cSettings);
         }
 
         public Challenge GetChallenge()
         {
             var challenge= _challenges.Where(w => w.InputNumber == null).FirstOrDefault();
+            if(challenge==null)
+            {
+                GenerateChallenge(_cSettings);
+                challenge = _challenges.Where(w => w.InputNumber == null).FirstOrDefault();
+            }
             challenge.StartTime = DateTime.Now;
             return challenge;
         }
@@ -59,15 +65,14 @@ namespace BasicMathConsole
             var firstChallenge = _challenges.Where(w=>w.InputNumber !=null).OrderBy(o => o.StartTime).FirstOrDefault();
             var lastChallenge = _challenges.Where(w => w.InputNumber != null).OrderByDescending(o => o.AnswerTime).FirstOrDefault();
             summary.ChallengeDuration = lastChallenge.AnswerTime-firstChallenge.StartTime;
-            summary.TrueCount = _challenges.Count(c => c.IsAnswerCorrect == true);
-            summary.FalseCount = _challenges.Count(c => c.IsAnswerCorrect == false);
+            summary.TrueCount = _challenges.Where(w => w.InputNumber != null).Count(c => c.IsAnswerCorrect == true);
+            summary.FalseCount = _challenges.Where(w => w.InputNumber != null).Count(c => c.IsAnswerCorrect == false);
             summary.LongestChallenge = _challenges.Where(w => w.InputNumber != null).OrderByDescending(o => o.Duration).FirstOrDefault();
             summary.FastestChallenge = _challenges.Where(w => w.InputNumber != null).OrderBy(o => o.Duration).FirstOrDefault();
             return summary;
         }
         private List<Challenge> GenerateChallenge(ChallengeSettings cSettings)
         {
-            _challenges.Clear();
             for (int i = 0; i < cSettings.ChallengeCount; i++)
             {
                 var number1 = _random.Next(cSettings.MinNumber, cSettings.MaxNumber);

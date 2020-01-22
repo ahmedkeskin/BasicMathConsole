@@ -12,8 +12,6 @@ namespace BasicMathConsole
         private static MathManager _mathManager;
         static void Main(string[] args)
         {
-            Console.SetWindowSize(40, 10);
-            Console.SetBufferSize(40, 10);
             _mathManager = new MathManager();
 
             while (_programStatus)
@@ -29,6 +27,7 @@ namespace BasicMathConsole
                 challenge.InputNumber = inputNumber;
                 var result = _mathManager.SaveAnswer(challenge);
                 Console.WriteLine(result.ResultText);
+                Console.ReadLine();
             }
             try
             {
@@ -47,8 +46,6 @@ namespace BasicMathConsole
         static void WriteSummary(Summary summary)
         {
             Console.Clear();
-            Console.SetWindowSize(120, 30);
-            Console.SetBufferSize(120, 30);
             string lines="<=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=->";
             Console.WriteLine($"{lines} <o> S U M M A R Y <o> {lines}");
             
@@ -105,13 +102,7 @@ namespace BasicMathConsole
         }
         static void WriteList(List<Challenge> challenges)
         {
-            //challenges[0].OrderNumber;
-            //challenges[0].Duration;
-            //challenges[0].Question;
-            //challenges[0].InputNumber;
-            //challenges[0].IsAnswerCorrect;
-
-            string[] titles =  {"Number","Duration","Question","Answer","Status" };
+            string[] titles =  {"Number","Duration","Question","Given Answer","Status" };
             var titlesWidth = titles.Sum(p=>p.Length) + titles.Length;
             var width = Console.WindowWidth / titles.Length;
             width++;
@@ -120,15 +111,58 @@ namespace BasicMathConsole
             
             for (int row = 0; row <= challenges.Count; row++)
             {
+                if (row == 0)
+                {
+                    string space = " ";
+                    Console.BackgroundColor = ConsoleColor.White;
+                    Console.ForegroundColor = ConsoleColor.Black;
+                    for (int z = 0; z < Console.WindowWidth - 1; z++)
+                    {
+                        space += " ";
+                    }
+                    Console.SetCursorPosition(0, row + 4);
+                    Console.Write(space);
+                }
+                if (row % 2 == 0 && row != 0)
+                {
+                    string space = " ";
+                    Console.BackgroundColor = ConsoleColor.Red;
+                    Console.ForegroundColor = ConsoleColor.White;
+                    for (int z = 0; z < Console.WindowWidth-1; z++)
+                    {
+                        space += " ";
+                    }
+                    Console.SetCursorPosition(0, row + 4);
+                    Console.Write(space);
+
+                }
+                else if (row != 0)
+                {
+                    Console.BackgroundColor = ConsoleColor.DarkMagenta;
+                    Console.ForegroundColor = ConsoleColor.White;
+                    string space = " ";
+                    for (int z = 0; z < Console.WindowWidth-1; z++)
+                    {
+                        space += " ";
+                    }
+                    Console.SetCursorPosition(0, row + 4);
+                    Console.Write(space);
+
+                }
                 for (int i = 0; i < titles.Length; i++)
                 {
+                    
                     Console.SetCursorPosition(i * width, row+4);
                     Console.Write(titles[i]);
                 }
                 if (row == challenges.Count)
+                {
+                    Console.BackgroundColor = ConsoleColor.Black;
+                    Console.ForegroundColor = ConsoleColor.White;
                     break;
+                }
                 titles[0] = challenges[row].OrderNumber.ToString();
-                titles[1] = challenges[row].Duration.ToString();
+                titles[1] = challenges[row].Duration.ToString(@"hh\:mm\:ss\.ff");
                 titles[2] = challenges[row].Question.ToString();
                 titles[3] = challenges[row].InputNumber.ToString();
                 titles[4] = challenges[row].IsAnswerCorrect.ToString();
