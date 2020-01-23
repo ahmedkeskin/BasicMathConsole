@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Newtonsoft.Json;
+using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
@@ -98,6 +99,8 @@ namespace BasicMathConsole
             Console.Write(summary.LongestChallenge.Question);
 
             WriteList(summary.AllChallenges);
+            var json=JsonConvert.SerializeObject(summary, Formatting.Indented);
+            File.WriteAllText(Environment.CurrentDirectory + "\\" + DateTime.Now.ToString("hhmmss") + ".json", json);
             Console.ReadLine();
         }
         static void WriteList(List<Challenge> challenges)

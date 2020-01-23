@@ -69,6 +69,9 @@ namespace BasicMathConsole
             summary.FalseCount = _challenges.Where(w => w.InputNumber != null).Count(c => c.IsAnswerCorrect == false);
             summary.LongestChallenge = _challenges.Where(w => w.InputNumber != null).OrderByDescending(o => o.Duration).FirstOrDefault();
             summary.FastestChallenge = _challenges.Where(w => w.InputNumber != null).OrderBy(o => o.Duration).FirstOrDefault();
+            summary.AvgDuration = TimeSpan.FromMilliseconds(_challenges.Where(w=>w.InputNumber!=null).Average(a => a.Duration.TotalMilliseconds));
+            summary.AnswerCountByUppersFromAvg = _challenges.Where(w => w.InputNumber != null).Count(c => c.Duration >= summary.AvgDuration);
+            summary.AnswerCountByLowersFromAvg = _challenges.Where(w => w.InputNumber != null).Count(c => c.Duration < summary.AvgDuration);
             return summary;
         }
         private List<Challenge> GenerateChallenge(ChallengeSettings cSettings)
@@ -91,6 +94,7 @@ namespace BasicMathConsole
             challenge.Question = $"{number1}{operation.Sign}{number2}=?";
             challenge.FirstNumber = number1;
             challenge.LastNumber = number2;
+            challenge.Calculation = operation;
             challenge.Result = operation.Calculate(number1, number2);
             challenge.ResultText = $"{number1}{operation.Sign}{number2}={challenge.Result}";
             return challenge;

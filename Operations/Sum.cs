@@ -9,6 +9,7 @@ namespace BasicMathConsole.Operations
         public Sum()
         {
             Sign = "+";
+            Name = "Sum";
         }
         public override float Calculate(float number1, float number2)
         {
