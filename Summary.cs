@@ -14,7 +14,7 @@ namespace BasicMathConsole
         public int TrueCount { get; set; }
         public int FalseCount { get; set; }
         public Challenge FastestChallenge { get; set; }
-        public Challenge LongestChallenge { get; set; }
+        public Challenge SlowestChallenge { get; set; }
         
 
         public List<Challenge> AllChallenges { get; set; }
